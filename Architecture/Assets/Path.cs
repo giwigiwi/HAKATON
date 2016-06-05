@@ -14,6 +14,7 @@ public class Path : MonoBehaviour {
          
     }
 
+
      public bool IsIgnore(GameObject ignoreObject)
      {
          bool ignoreIs = false;

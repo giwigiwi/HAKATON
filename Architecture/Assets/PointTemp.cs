@@ -15,19 +15,47 @@ public class PointTemp : MonoBehaviour {
     public GameObject target;
     public GameObject scriptPath;
     public List<ObjectUsedVariant> usedInIteration;
+    public GameObject realPoint;
 
 
-    
+    private void AddObjectUsedVariant(GameObject gm, int index)
+    {
+        ObjectUsedVariant osv;
+        osv.objectPosition = gm;
+        osv.variant = index;
+        usedInIteration.Add(osv);
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
+
+    // Use this for initialization
+    void Start()
+    {
+        //AddObjectUsedVariant(gameObject, 1);
+        
+    }
+
+    private bool PoluchIzMassivaBool(GameObject gm, List<ObjectUsedVariant> listObjectVar)
+    {
+        for (int i = 0; i < listObjectVar.Count;i++)
+        {
+            if (listObjectVar[i].objectPosition == gm)
+                return true;
+        }
+        return false;
+    }
+
+    private GameObject PoluchIzMassivaGm(GameObject gm, List<ObjectUsedVariant> listObjectVar)
+    {
+        for (int i = 0; i < listObjectVar.Count; i++)
+        {
+            if (listObjectVar[i].objectPosition == gm)
+                return listObjectVar[i].objectPosition;
+        }
+        return null;
+    }
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Fire1"))
-            FindThePath();
+
 	}
     private Vector2 VectorAbs(Vector2 vec)
     {
@@ -39,58 +67,36 @@ public class PointTemp : MonoBehaviour {
     private bool AddVariant(GameObject tempGM, int varStep)
     {
         bool finded = false;
-        
-        for (int i=usedInIteration.Count; i>0;i--)
-        {
-            if (tempGM == usedInIteration[i].objectPosition)
-            {
-                ObjectUsedVariant objVar;
-                objVar.objectPosition=tempGM;
-                objVar.variant =varStep;
-                usedInIteration[i] = objVar;
-                finded = true;
-            }
-        }
-        if (!finded)
-        {
-            ObjectUsedVariant objVar;
-            objVar.objectPosition=tempGM;
-            objVar.variant =varStep;
-            usedInIteration.Add(objVar);
-        }
-
         return finded;
     }
 
 
     public void PathIteration()
     {
-
+        List<Path> path =null;
+        Path pt = Instantiate(scriptPath).GetComponent<Path>();
+        pt.pathGameObject.Add(realPoint);
+        path.Add(pt);
+        FindThePath(path);
     }
 
-    public void FindThePath()
+    public void FindThePath(List<Path> path)
     {
-
-        Debug.ClearDeveloperConsole();
-        Path sPath = Instantiate(scriptPath).GetComponent<Path>();
-
-
-        sPath.ignoreList.Add(positPoint);
-        sPath.pathGameObject.Add(positPoint);
-        int index = 0;
-        while (positPoint != target)
+        int i = 0;
+        while (true)
         {
-            GameObject tempGM = MinimumDistance(sPath);
-            sPath.ignoreList.Add(tempGM);
-            positPoint = tempGM;
-            sPath.pathGameObject.Add(positPoint);
-            index++;
-            if (index > 100)
-                break;
+            if (PoluchIzMassivaBool(path[i].gameObject, usedInIteration)) 
+            {
+                for (int ib=0; ib < path.Count; i++)
+                {
+                    PoluchIzMassivaGm(path[i].gameObject, usedInIteration);
+
+                }
+            }
+
 
         }
-        ArrayPath.Add(sPath);
-        sPath.ConstructPath();
+
     }
 
     private float VectorDistance(Vector2 v1, Vector2 v2)

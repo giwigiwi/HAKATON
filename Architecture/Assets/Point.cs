@@ -16,12 +16,18 @@ public class Point : MonoBehaviour {
     public GameObject scriptPath;
     public List<ObjectUsedVariant> usedInIteration;
 
-
+    private void AddObjectUsedVariant(GameObject gm, int index)
+    {
+        ObjectUsedVariant osv;
+        osv.objectPosition = gm;
+        osv.variant = index;
+        usedInIteration.Add(osv);
+    }
     
 
 	// Use this for initialization
 	void Start () {
-	
+        AddObjectUsedVariant(gameObject,1);
 	}
 	
 	// Update is called once per frame
